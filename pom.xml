@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>3.5.8</version>
+        <relativePath/> <!-- lookup parent from repository -->
+    </parent>
+    <groupId>org.example</groupId>
+    <artifactId>langchain4jLearn</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+    <name>langchain4jLearn</name>
+    <description>langchain4jLearn</description>
+    <url/>
+    <licenses>
+        <license/>
+    </licenses>
+    <developers>
+        <developer/>
+    </developers>
+    <scm>
+        <connection/>
+        <developerConnection/>
+        <tag/>
+        <url/>
+    </scm>
+    <properties>
+        <jda.version>5.0.0-beta.9</jda.version>
+        <openai-gpt3-java.version>0.12.0</openai-gpt3-java.version>
+        <dataurl.version>2.0.0</dataurl.version>
+        <knife4j.verison>4.1.0</knife4j.verison>
+        <user-agent-utils.verison>1.21</user-agent-utils.verison>
+        <java.version>17</java.version>
+        <maven.compiler.source>${java.version}</maven.compiler.source>
+        <maven.compiler.target>${java.version}</maven.compiler.target>
+        <spring-boot-maven-plugin.version>2.6.7</spring-boot-maven-plugin.version>
+        <langchain4j.version>1.7.1-beta14</langchain4j.version>
+    </properties>
+    <dependencies>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-redis</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.github.xiaoymin</groupId>
+            <artifactId>knife4j-openapi2-spring-boot-starter</artifactId>
+            <version>${knife4j.verison}</version>
+        </dependency>
+        <dependency>
+            <groupId>eu.bitwalker</groupId>
+            <artifactId>UserAgentUtils</artifactId>
+            <version>${user-agent-utils.verison}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-configuration-processor</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <!-- <dependency>
+            <groupId>dev.langchain4j</groupId>
+            <artifactId>langchain4j-onnx-scoring</artifactId>
+            <version>${langchain4j.version}</version>
+        </dependency> -->
+        
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-devtools</artifactId>
+            <scope>runtime</scope>
+            <optional>true</optional>
+        </dependency>
+        <!-- Jsoup for web crawling -->
+        <!--     <dependency>
+                 <groupId>org.jsoup</groupId>
+                 <artifactId>jsoup</artifactId>
+                 <version>1.17.2</version>
+             </dependency>-->
+        <!-- Apache HttpClient for API calls -->
+        <dependency>
+            <groupId>org.apache.httpcomponents.client5</groupId>
+            <artifactId>httpclient5</artifactId>
+            <version>5.3.1</version>
+        </dependency>
+        <!-- Milvus SDK -->
+        <!-- <dependency>
+            <groupId>io.milvus</groupId>
+            <artifactId>milvus-sdk-java</artifactId>
+            <version>2.6.0</version>
+        </dependency> -->
+        <dependency>
+            <groupId>cn.hutool</groupId>
+            <artifactId>hutool-all</artifactId>
+            <version>5.8.36</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <!-- LangChain4j OpenAI Spring Boot Starter -->
+        <!-- <dependency>
+            <groupId>dev.langchain4j</groupId>
+            <artifactId>langchain4j-open-ai-spring-boot-starter</artifactId>
+            <version>${langchain4j.version}</version>
+        </dependency>
+
+        LangChain4j Spring Boot Starter -->
+        <!-- <dependency>
+            <groupId>dev.langchain4j</groupId>
+            <artifactId>langchain4j-spring-boot-starter</artifactId>
+            <version>${langchain4j.version}</version>
+        </dependency>
+
+        Milvus向量存储集成 -->
+        <!-- <dependency>
+            <groupId>dev.langchain4j</groupId>
+            <artifactId>langchain4j-milvus</artifactId>
+            <version>${langchain4j.version}</version>
+        </dependency>
+
+        本地Embedding模型 -->
+        <!-- <dependency>
+            <groupId>dev.langchain4j</groupId>
+            <artifactId>langchain4j-embeddings-all-minilm-l6-v2-q</artifactId>
+            <version>${langchain4j.version}</version>
+        </dependency>
+
+        Cohere重排序模型 -->
+        <!-- <dependency>
+            <groupId>dev.langchain4j</groupId>
+            <artifactId>langchain4j-cohere</artifactId>
+            <version>${langchain4j.version}</version>
+        </dependency>
+
+        文档加载器 -->
+        <!-- <dependency>
+            <groupId>dev.langchain4j</groupId>
+            <artifactId>langchain4j-document-parser-apache-pdfbox</artifactId>
+            <version>${langchain4j.version}</version>
+        </dependency> -->
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>
