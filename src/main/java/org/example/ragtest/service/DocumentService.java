@@ -14,14 +14,19 @@ import org.example.ragtest.loader.DocumentLoaderType;
 import org.example.ragtest.splitter.DocumentSplitterFactory;
 import org.example.ragtest.splitter.DocumentSplitterStrategy;
 import org.example.ragtest.splitter.DocumentSplitterType;
+import org.example.ragtest.documentTransformer.DocumentTransformerFactory;
+import org.example.ragtest.documentTransformer.DocumentTransformerStrategy;
+import org.example.ragtest.documentTransformer.DocumentTransformerType;
+import org.example.ragtest.textSegmentTransformer.TextSegmentTransformerFactory;
+import org.example.ragtest.textSegmentTransformer.TextSegmentTransformerStrategy;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 /**
  * 文档处理服务
- * 负责文档的加载、分割和向量化存储
- * 使用策略模式和工厂模式管理不同类型的文档加载器和分割器
+ * 负责文档的加载、转换、分割和向量化存储
+ * 使用策略模式和工厂模式管理不同类型的文档加载器、转换器、分割器和文本段转换器
  */
 @Slf4j
 @Service
@@ -32,6 +37,8 @@ public class DocumentService {
     private final EmbeddingStore<TextSegment> embeddingStore;
     private final DocumentLoaderFactory loaderFactory;
     private final DocumentSplitterFactory splitterFactory;
+    private final DocumentTransformerFactory transformerFactory;
+    private final TextSegmentTransformerFactory textSegmentTransformerFactory;
 
     /**
      * 摄取文本到向量存储（使用默认分割器）
@@ -58,22 +65,72 @@ public class DocumentService {
      * @param splitterType 分割器类型
      */
     public void ingestDocuments(List<Document> documents, DocumentSplitterType splitterType) {
-        log.info("开始批量摄取文档，数量: {}, 使用分割器: {}", documents.size(), splitterType);
+        ingestDocuments(documents, splitterType, false);
+    }
+    
+    /**
+     * 批量摄取多个文档（指定分割器类型和是否应用转换器）
+     * @param documents 文档列表
+     * @param splitterType 分割器类型
+     * @param applyTransformation 是否应用默认转换流程
+     */
+    public void ingestDocuments(List<Document> documents, DocumentSplitterType splitterType, boolean applyTransformation) {
+        ingestDocuments(documents, splitterType, applyTransformation, true);
+    }
+    
+    /**
+     * 批量摄取多个文档（完整配置）
+     * @param documents 文档列表
+     * @param splitterType 分割器类型
+     * @param applyDocTransformation 是否应用文档转换器
+     * @param applySegmentEnhancement 是否应用文本段增强
+     */
+    public void ingestDocuments(List<Document> documents, DocumentSplitterType splitterType, 
+                                boolean applyDocTransformation, boolean applySegmentEnhancement) {
+        log.info("开始批量摄取文档，数量: {}, 分割器: {}, 文档转换: {}, 文本段增强: {}", 
+                documents.size(), splitterType, applyDocTransformation, applySegmentEnhancement);
         
-        // 使用工厂获取指定类型的分割器
+        // 1. 如果需要，先应用文档转换器
+        List<Document> processedDocuments = documents;
+        if (applyDocTransformation) {
+            DocumentTransformerStrategy transformer = transformerFactory.createDefaultPipeline();
+            processedDocuments = transformer.transformAll(documents);
+            log.info("文档转换后数量: {}", processedDocuments.size());
+        }
+        
+        // 2. 使用工厂获取指定类型的分割器
         DocumentSplitterStrategy splitterStrategy = splitterFactory.getSplitter(splitterType);
         DocumentSplitter splitter = splitterStrategy.getSplitterInstance();
-        
         log.debug("分割器配置: {}", splitterStrategy.getDescription());
         
-        // 创建嵌入存储摄取器
-        EmbeddingStoreIngestor ingestor = EmbeddingStoreIngestor.builder()
+        // 3. 创建嵌入存储摄取器（配置文本段转换器）
+        var builder = EmbeddingStoreIngestor.builder()
                 .documentSplitter(splitter)
                 .embeddingModel(embeddingModel)
-                .embeddingStore(embeddingStore)
-                .build();
+                .embeddingStore(embeddingStore);
         
-        ingestor.ingest(documents);
+        // 4. 如果需要，添加文本段转换器
+        if (applySegmentEnhancement) {
+            List<TextSegmentTransformerStrategy> segmentTransformers = 
+                    textSegmentTransformerFactory.createDefaultPipeline();
+            
+            // 将文本段转换器应用到摄取过程（逐个应用）
+            builder.textSegmentTransformer(segment -> {
+                TextSegment result = segment;
+                for (TextSegmentTransformerStrategy transformer : segmentTransformers) {
+                    result = transformer.transform(result);
+                    if (result == null) {
+                        break;  // 如果被过滤，停止处理
+                    }
+                }
+                return result;
+            });
+            
+            log.info("已配置 {} 个文本段转换器", segmentTransformers.size());
+        }
+        
+        EmbeddingStoreIngestor ingestor = builder.build();
+        ingestor.ingest(processedDocuments);
         
         log.info("批量文档摄取完成");
     }
@@ -171,6 +228,46 @@ public class DocumentService {
      */
     public java.util.Map<DocumentSplitterType, String> getAvailableSplitters() {
         return splitterFactory.listAvailableSplitters();
+    }
+    
+    // ==================== 使用策略模式的文档转换方法 ====================
+    
+    /**
+     * 使用指定转换器处理文档并摄取
+     * @param loaderType 加载器类型
+     * @param sourcePath 源路径
+     * @param transformerTypes 转换器类型列表
+     * @param splitterType 分割器类型
+     */
+    public void ingestDocumentWithTransformers(
+            DocumentLoaderType loaderType,
+            String sourcePath,
+            List<DocumentTransformerType> transformerTypes,
+            DocumentSplitterType splitterType) {
+        log.info("使用 {} 加载器、{} 个转换器和 {} 分割器处理文档: {}", 
+                loaderType, transformerTypes.size(), splitterType, sourcePath);
+        
+        // 加载文档
+        DocumentLoaderStrategy loader = loaderFactory.getLoader(loaderType);
+        Document document = loader.loadDocument(sourcePath);
+        
+        // 应用转换器
+        DocumentTransformerStrategy transformer = transformerFactory.createCompositeTransformer(transformerTypes);
+        Document transformed = transformer.transform(document);
+        
+        if (transformed != null) {
+            ingestDocuments(List.of(transformed), splitterType);
+        } else {
+            log.warn("文档在转换过程中被过滤");
+        }
+    }
+    
+    /**
+     * 获取可用的转换器列表
+     * @return 转换器类型和描述的映射
+     */
+    public java.util.Map<DocumentTransformerType, String> getAvailableTransformers() {
+        return transformerFactory.listAvailableTransformers();
     }
 
 }

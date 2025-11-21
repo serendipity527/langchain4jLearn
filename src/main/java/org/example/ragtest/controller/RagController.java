@@ -6,8 +6,10 @@ import org.example.ragtest.loader.DocumentLoaderType;
 import org.example.ragtest.service.DocumentService;
 import org.example.ragtest.service.NaiveRagService;
 import org.example.ragtest.splitter.DocumentSplitterType;
+import org.example.ragtest.documentTransformer.DocumentTransformerType;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -156,6 +158,40 @@ public class RagController {
         return documentService.getAvailableSplitters();
     }
 
+    // ==================== 文档转换器相关接口 ====================
+
+    /**
+     * 使用自定义转换器处理文档
+     * @param request 转换器请求
+     * @return 成功消息
+     */
+    @PostMapping("/ingest-with-transformers")
+    public String ingestWithTransformers(@RequestBody TransformerRequest request) {
+        log.info("收到转换器请求，加载器: {}, 转换器数量: {}, 分割器: {}, 路径: {}", 
+                request.loaderType(), request.transformerTypes().size(), 
+                request.splitterType(), request.sourcePath());
+        
+        documentService.ingestDocumentWithTransformers(
+                request.loaderType(),
+                request.sourcePath(),
+                request.transformerTypes(),
+                request.splitterType());
+        
+        return String.format("使用 %s 加载器、%d 个转换器和 %s 分割器摄取文档成功: %s", 
+                request.loaderType(), request.transformerTypes().size(), 
+                request.splitterType(), request.sourcePath());
+    }
+
+    /**
+     * 获取所有可用的转换器列表
+     * @return 转换器类型和描述的映射
+     */
+    @GetMapping("/transformers")
+    public Map<DocumentTransformerType, String> getAvailableTransformers() {
+        log.info("查询可用的转换器列表");
+        return documentService.getAvailableTransformers();
+    }
+
     // 请求对象
     public record IngestRequest(String text) {}
     public record QueryRequest(String question) {}
@@ -167,5 +203,10 @@ public class RagController {
     public record CustomSplitterRequest(
             DocumentLoaderType loaderType, 
             String sourcePath, 
+            DocumentSplitterType splitterType) {}
+    public record TransformerRequest(
+            DocumentLoaderType loaderType,
+            String sourcePath,
+            List<DocumentTransformerType> transformerTypes,
             DocumentSplitterType splitterType) {}
 }
