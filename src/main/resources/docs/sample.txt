@@ -1,0 +1,20 @@
+这是一个测试文档示例。
+
+LangChain4j 文档加载器测试
+=========================
+
+这个文档用于测试 DocumentService 的文档加载功能。
+
+文档加载器支持多种方式:
+1. 从文件路径加载 (支持 PDF, TXT, MD 等格式)
+2. 从 URL 加载远程文档  
+3. 从 InputStream 加载
+4. 批量从文件夹加载所有文档
+
+文档处理流程:
+1. 使用 DocumentParser 解析文档
+2. 使用 DocumentSplitter 分割成小片段
+3. 使用 EmbeddingModel 将片段向量化
+4. 存储到 EmbeddingStore 向量数据库
+
+这样就可以实现基于文档的 RAG 查询功能了!

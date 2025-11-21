@@ -130,10 +130,18 @@
             <version>${langchain4j.version}</version>
         </dependency>
 
-        <!-- 文档加载器 -->
+        <!-- 文档解析器 -->
+        <!-- PDF 解析器 -->
         <dependency>
             <groupId>dev.langchain4j</groupId>
             <artifactId>langchain4j-document-parser-apache-pdfbox</artifactId>
+            <version>${langchain4j.version}</version>
+        </dependency>
+        
+        <!-- MS Office 解析器 (DOC, DOCX, PPT, PPTX, XLS, XLSX) -->
+        <dependency>
+            <groupId>dev.langchain4j</groupId>
+            <artifactId>langchain4j-document-parser-apache-poi</artifactId>
             <version>${langchain4j.version}</version>
         </dependency>
         
@@ -143,6 +151,7 @@
             <artifactId>langchain4j</artifactId>
             <version>1.7.1</version>
         </dependency>
+
     </dependencies>
 
     <build>
