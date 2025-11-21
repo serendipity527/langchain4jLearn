@@ -91,7 +91,7 @@
         <dependency>
             <groupId>org.apache.httpcomponents.client5</groupId>
             <artifactId>httpclient5</artifactId>
-            <version>5.3.1</version>
+            <version>5.4.1</version>
         </dependency>
         <!-- Milvus SDK -->
         <!-- <dependency>
@@ -116,46 +116,33 @@
             <scope>test</scope>
         </dependency>
         <!-- LangChain4j OpenAI Spring Boot Starter -->
-        <!-- <dependency>
+        <dependency>
             <groupId>dev.langchain4j</groupId>
             <artifactId>langchain4j-open-ai-spring-boot-starter</artifactId>
             <version>${langchain4j.version}</version>
         </dependency>
 
-        LangChain4j Spring Boot Starter -->
-        <!-- <dependency>
-            <groupId>dev.langchain4j</groupId>
-            <artifactId>langchain4j-spring-boot-starter</artifactId>
-            <version>${langchain4j.version}</version>
-        </dependency>
 
-        Milvus向量存储集成 -->
-        <!-- <dependency>
-            <groupId>dev.langchain4j</groupId>
-            <artifactId>langchain4j-milvus</artifactId>
-            <version>${langchain4j.version}</version>
-        </dependency>
-
-        本地Embedding模型 -->
-        <!-- <dependency>
+        <!-- 本地Embedding模型 -->
+        <dependency>
             <groupId>dev.langchain4j</groupId>
             <artifactId>langchain4j-embeddings-all-minilm-l6-v2-q</artifactId>
             <version>${langchain4j.version}</version>
         </dependency>
 
-        Cohere重排序模型 -->
-        <!-- <dependency>
-            <groupId>dev.langchain4j</groupId>
-            <artifactId>langchain4j-cohere</artifactId>
-            <version>${langchain4j.version}</version>
-        </dependency>
-
-        文档加载器 -->
-        <!-- <dependency>
+        <!-- 文档加载器 -->
+        <dependency>
             <groupId>dev.langchain4j</groupId>
             <artifactId>langchain4j-document-parser-apache-pdfbox</artifactId>
             <version>${langchain4j.version}</version>
-        </dependency> -->
+        </dependency>
+        
+        <!-- langchain4j 核心库 (包含 InMemoryEmbeddingStore, DocumentSplitters 等) -->
+        <dependency>
+            <groupId>dev.langchain4j</groupId>
+            <artifactId>langchain4j</artifactId>
+            <version>1.7.1</version>
+        </dependency>
     </dependencies>
 
     <build>

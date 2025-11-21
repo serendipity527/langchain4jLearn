@@ -3,21 +3,15 @@ spring:
     name: ragTest
 
 # ===== LangChain4j OpenAI Configuration =====
-# langchain4j:
-#   open-ai:
-#     chat-model:
-#       api-key: sk-c2348668346f42b99e63a6c31cfecb69
-#       model-name: qwen-plus
-#       temperature: 0.7
-#       log-requests: true
-#       log-responses: true
-#       base-url: https://dashscope.aliyuncs.com/compatible-mode/v1
-#     # OpenAI Embedding Model
-#     embedding-model:
-#       api-key: sk-c2348668346f42b99e63a6c31cfecb69
-#       model-name: text-embedding-v4
-#       base-url: https://dashscope.aliyuncs.com/compatible-mode/v1
-#       dimensions: 1536
+langchain4j:
+  open-ai:
+    chat-model:
+      api-key: sk-c2348668346f42b99e63a6c31cfecb69
+      model-name: qwen-max
+      temperature: 0.7
+      log-requests: true
+      log-responses: true
+      base-url: https://dashscope.aliyuncs.com/compatible-mode/v1
 
 # ===== Milvus Configuration =====
 # milvus:
